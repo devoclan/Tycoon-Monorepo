@@ -1,5 +1,11 @@
 # Security Review Checklist — tycoon-token (SW-CON-TOKEN-001)
 
+**Issue:** #1028
+**Contract:** `contract/contracts/tycoon-token/src/lib.rs`
+**SDK:** soroban-sdk 23
+**Reviewer:** (assign before merge)
+**Status:** All checklist items below verified against current source.
+
 ## Authorization & Access Control
 
 - [x] `initialize` — one-time guard via `Initialized` key; no auth required by design
