@@ -53,6 +53,15 @@ impl TycoonContract {
             panic!("Contract already initialized");
         }
 
+        let contract_address = env.current_contract_address();
+        if tyc_token == contract_address
+            || usdc_token == contract_address
+            || initial_owner == contract_address
+            || reward_system == contract_address
+        {
+            panic!("Invalid address: cannot be the contract itself");
+        }
+
         initial_owner.require_auth();
 
         storage::set_tyc_token(&env, &tyc_token);
