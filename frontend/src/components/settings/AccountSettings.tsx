@@ -82,7 +82,7 @@ export function AccountSettings() {
               <Button
                 type="submit"
                 disabled={isEmailLoading}
-                className="bg-[var(--tycoon-accent)] text-[#010F10] hover:bg-[var(--tycoon-accent)]/90"
+                className="min-w-[140px] bg-[var(--tycoon-accent)] text-[#010F10] hover:bg-[var(--tycoon-accent)]/90"
               >
                 {isEmailLoading ? (
                   <>

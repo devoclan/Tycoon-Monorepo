@@ -98,7 +98,7 @@ export function NotificationSettings() {
           <Button
             onClick={handleSave}
             disabled={isSaving}
-            className="bg-[var(--tycoon-accent)] text-[#010F10] hover:bg-[var(--tycoon-accent)]/90"
+            className="min-w-[160px] bg-[var(--tycoon-accent)] text-[#010F10] hover:bg-[var(--tycoon-accent)]/90"
           >
             {isSaving ? (
               <>
