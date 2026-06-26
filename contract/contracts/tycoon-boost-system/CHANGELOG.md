@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - SW-CON-1040
+
+### Added
+- Enhanced `cap_stacking_expiry_tests.rs` test coverage (+21 tests, 68% increase)
+  - 8 new edge case tests (EDGE-01 to EDGE-08): minimum/maximum values, ledger boundaries
+  - 6 new complex scenario tests (COMPLEX-01 to COMPLEX-06): full capacity, cascading expiry, priority chains
+  - 4 new error recovery tests (ERROR-01 to ERROR-04): state integrity after validation errors
+  - 3 new cap variation tests: type-specific capacity, clear/refill patterns
+  - 4 new expiry variation tests: simultaneous expiry, boundary conditions, mixed patterns
+  - 4 new stacking interaction tests: precision, priority ties, formula verification
+- `CAP_STACKING_EXPIRY_TEST_COVERAGE.md` — comprehensive test coverage documentation (500+ lines)
+- Updated test coverage summary in `cap_stacking_expiry_tests.rs` header
+- Total test count increased from 211 to 232+ tests
+
 ## [Unreleased] - SW-CT-027
 
 ### Added
