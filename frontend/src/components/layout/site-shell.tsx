@@ -4,16 +4,18 @@ import type { ReactNode } from "react";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import NavbarMobile from "@/components/shared/NavbarMobile";
+import { ShellErrorBoundary } from "./shell-error-boundary";
 
 type SiteShellProps = {
   children: ReactNode;
+  errorFallback?: ReactNode;
 };
 
 /**
  * App shell: sticky header (see Navbar), primary main landmark, global footer, mobile nav.
  * Sticky header keeps wayfinding on-screen; Navbar uses a fixed h-16 so skip-link scroll-mt matches.
  */
-export function SiteShell({ children }: SiteShellProps) {
+export function SiteShell({ children, errorFallback }: SiteShellProps) {
   return (
     <div className="flex min-h-dvh flex-col bg-[var(--tycoon-bg)]">
       <a
@@ -29,7 +31,9 @@ export function SiteShell({ children }: SiteShellProps) {
         tabIndex={-1}
         className="flex-1 min-h-0 scroll-mt-16 outline-none pb-24 md:pb-8"
       >
-        {children}
+        <ShellErrorBoundary fallback={errorFallback}>
+          {children}
+        </ShellErrorBoundary>
       </main>
       <Footer />
       <NavbarMobile />

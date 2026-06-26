@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { vi, describe, it, expect } from "vitest";
 import { SiteShell } from "../site-shell";
+import { ShellErrorBoundary } from "../shell-error-boundary";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/",
@@ -103,5 +104,139 @@ describe("SiteShell", () => {
       render(<SiteShell><p>x</p></SiteShell>);
       expect(screen.getByRole("contentinfo")).toBeDefined();
     });
+
+    it("outer shell has stable background color class to prevent flash-of-white CLS", () => {
+      const { container } = render(<SiteShell><p>x</p></SiteShell>);
+      const shell = container.firstChild as HTMLElement;
+      expect(shell.className).toContain("bg-[var(--tycoon-bg)]");
+    });
+  });
+
+  describe("accessibility", () => {
+    it("main element has outline-none to suppress default focus ring", () => {
+      render(<SiteShell><p>x</p></SiteShell>);
+      expect(screen.getByRole("main").className).toContain("outline-none");
+    });
+
+    it("main element has pb-24 for mobile nav bar clearance", () => {
+      render(<SiteShell><p>x</p></SiteShell>);
+      expect(screen.getByRole("main").className).toContain("pb-24");
+    });
+
+    it("main element has flex-1 to fill available vertical space", () => {
+      render(<SiteShell><p>x</p></SiteShell>);
+      expect(screen.getByRole("main").className).toContain("flex-1");
+    });
+
+    it("skip link has sr-only class so it is hidden until focused", () => {
+      render(<SiteShell><p>x</p></SiteShell>);
+      const skipLink = screen.getByRole("link", { name: /skip to content/i });
+      expect(skipLink.className).toContain("sr-only");
+    });
+
+    it("skip link has focus:z-[100] to appear above overlays when focused", () => {
+      render(<SiteShell><p>x</p></SiteShell>);
+      const skipLink = screen.getByRole("link", { name: /skip to content/i });
+      expect(skipLink.className).toContain("focus:z-[100]");
+    });
+  });
+
+  describe("slot variations", () => {
+    it("renders multiple children inside main", () => {
+      render(
+        <SiteShell>
+          <p data-testid="a">A</p>
+          <p data-testid="b">B</p>
+        </SiteShell>
+      );
+      expect(screen.getByTestId("a")).toBeDefined();
+      expect(screen.getByTestId("b")).toBeDefined();
+    });
+
+    it("renders deeply nested children without loss", () => {
+      render(
+        <SiteShell>
+          <div>
+            <section>
+              <p data-testid="deep">deep</p>
+            </section>
+          </div>
+        </SiteShell>
+      );
+      expect(screen.getByTestId("deep")).toBeDefined();
+    });
+  });
+
+  describe("accessibility", () => {
+    it("main element has outline-none to suppress default focus ring", () => {
+      render(<SiteShell><p>x</p></SiteShell>);
+      const main = screen.getByRole("main");
+      expect(main.className).toContain("outline-none");
+    });
+
+    it("main element has pb-24 for mobile nav clearance", () => {
+      render(<SiteShell><p>x</p></SiteShell>);
+      const main = screen.getByRole("main");
+      expect(main.className).toContain("pb-24");
+    });
+  });
+});
+
+describe("ShellErrorBoundary", () => {
+  function Bomb() {
+    throw new Error("boom");
+  }
+
+  it("renders children when no error", () => {
+    render(
+      <ShellErrorBoundary>
+        <p data-testid="ok">fine</p>
+      </ShellErrorBoundary>
+    );
+    expect(screen.getByTestId("ok")).toBeDefined();
+  });
+
+  it("renders default fallback on render error", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    render(
+      <ShellErrorBoundary>
+        <Bomb />
+      </ShellErrorBoundary>
+    );
+    expect(screen.getByTestId("shell-error-fallback")).toBeDefined();
+    expect(screen.getByRole("alert")).toBeDefined();
+    spy.mockRestore();
+  });
+
+  it("renders custom fallback when provided", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    render(
+      <ShellErrorBoundary fallback={<p data-testid="custom-fb">oops</p>}>
+        <Bomb />
+      </ShellErrorBoundary>
+    );
+    expect(screen.getByTestId("custom-fb")).toBeDefined();
+    spy.mockRestore();
+  });
+
+  it("renders empty state when children is null", () => {
+    render(<ShellErrorBoundary>{null}</ShellErrorBoundary>);
+    expect(screen.getByTestId("shell-empty-state")).toBeDefined();
+  });
+
+  it("renders empty state when children is undefined", () => {
+    render(<ShellErrorBoundary>{undefined}</ShellErrorBoundary>);
+    expect(screen.getByTestId("shell-empty-state")).toBeDefined();
+  });
+
+  it("SiteShell wraps children in error boundary — shows fallback on crash", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    render(
+      <SiteShell errorFallback={<p data-testid="page-error">page crashed</p>}>
+        <Bomb />
+      </SiteShell>
+    );
+    expect(screen.getByTestId("page-error")).toBeDefined();
+    spy.mockRestore();
   });
 });

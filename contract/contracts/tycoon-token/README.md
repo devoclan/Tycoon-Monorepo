@@ -108,10 +108,11 @@ Test modules and coverage:
 | `src/test.rs` | Core functional tests + simulation scenarios (SW-1) |
 | `src/invariant_tests.rs` | Mint/burn invariants INV-01 – INV-17 |
 | `src/error_branch_tests.rs` | Error path coverage |
-| `src/access_control_tests.rs` | Admin-only vs public entrypoint enforcement |
+| `src/access_control_tests.rs` | Admin-only vs public entrypoint enforcement (#1033) |
 | `src/deprecation_tests.rs` | Legacy entrypoint deprecation guards |
 | `src/security_review_tests.rs` | Security checklist items SEC-01 – SEC-07 |
 | `src/simulation_scenarios.rs` | End-to-end simulation scenarios (SIM-01 – SIM-05) |
+| `src/storage_rent_tests.rs` | Storage rent budget & TTL verification (#1034) |
 
 ## Deployment
 
