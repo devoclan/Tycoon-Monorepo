@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - SW-CON-1039
+
+### Added
+- **Enhanced advanced integration test coverage** — Comprehensive review and expansion of integration tests
+  - Added 20 new advanced integration test scenarios
+  - Added admin operation integration tests (8 tests covering admin-player interactions)
+  - Added priority mechanics tests (4 tests covering override priority handling)
+  - Added complex state transition tests (5 tests covering full lifecycle workflows)
+  - Added performance and stress tests (3 tests covering scalability)
+  - Total advanced integration tests: 49 (previously 29, +69% increase)
+- Documentation:
+  - `ADVANCED_INTEGRATION_TEST_COVERAGE.md` - Complete test coverage report with scenarios
+  - Test coverage matrix documenting all 49 test scenarios (AIT-01 through AIT-20)
+- Test categories added:
+  - Admin operations integration (8 tests) - grant/revoke with player ops
+  - Priority mechanics (4 tests) - override priority edge cases
+  - State transitions (5 tests) - complex workflows and time-based changes
+  - Performance & stress (3 tests) - multi-player scalability
+
+### Changed
+- Enhanced `src/advanced_integration_tests.rs` with 20 new comprehensive tests
+- Updated README.md test coverage section (211+ total tests, up from 191)
+- Added detailed test documentation with scenario descriptions
+
+### Testing
+- All 211+ tests pass
+- 100% coverage of admin-player operation integration
+- Complete priority mechanics coverage
+- Complex state transition validation
+- Performance and scalability verification
+
 ## [Unreleased] - SW-CT-027
 
 ### Added
