@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { vi, describe, it, expect } from "vitest";
 import { SiteShell } from "../site-shell";
+import { ShellErrorBoundary } from "../shell-error-boundary";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/",
@@ -164,5 +165,78 @@ describe("SiteShell", () => {
       );
       expect(screen.getByTestId("deep")).toBeDefined();
     });
+  });
+
+  describe("accessibility", () => {
+    it("main element has outline-none to suppress default focus ring", () => {
+      render(<SiteShell><p>x</p></SiteShell>);
+      const main = screen.getByRole("main");
+      expect(main.className).toContain("outline-none");
+    });
+
+    it("main element has pb-24 for mobile nav clearance", () => {
+      render(<SiteShell><p>x</p></SiteShell>);
+      const main = screen.getByRole("main");
+      expect(main.className).toContain("pb-24");
+    });
+  });
+});
+
+describe("ShellErrorBoundary", () => {
+  function Bomb() {
+    throw new Error("boom");
+  }
+
+  it("renders children when no error", () => {
+    render(
+      <ShellErrorBoundary>
+        <p data-testid="ok">fine</p>
+      </ShellErrorBoundary>
+    );
+    expect(screen.getByTestId("ok")).toBeDefined();
+  });
+
+  it("renders default fallback on render error", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    render(
+      <ShellErrorBoundary>
+        <Bomb />
+      </ShellErrorBoundary>
+    );
+    expect(screen.getByTestId("shell-error-fallback")).toBeDefined();
+    expect(screen.getByRole("alert")).toBeDefined();
+    spy.mockRestore();
+  });
+
+  it("renders custom fallback when provided", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    render(
+      <ShellErrorBoundary fallback={<p data-testid="custom-fb">oops</p>}>
+        <Bomb />
+      </ShellErrorBoundary>
+    );
+    expect(screen.getByTestId("custom-fb")).toBeDefined();
+    spy.mockRestore();
+  });
+
+  it("renders empty state when children is null", () => {
+    render(<ShellErrorBoundary>{null}</ShellErrorBoundary>);
+    expect(screen.getByTestId("shell-empty-state")).toBeDefined();
+  });
+
+  it("renders empty state when children is undefined", () => {
+    render(<ShellErrorBoundary>{undefined}</ShellErrorBoundary>);
+    expect(screen.getByTestId("shell-empty-state")).toBeDefined();
+  });
+
+  it("SiteShell wraps children in error boundary — shows fallback on crash", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    render(
+      <SiteShell errorFallback={<p data-testid="page-error">page crashed</p>}>
+        <Bomb />
+      </SiteShell>
+    );
+    expect(screen.getByTestId("page-error")).toBeDefined();
+    spy.mockRestore();
   });
 });
