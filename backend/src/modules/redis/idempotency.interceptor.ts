@@ -35,7 +35,8 @@ export class IdempotencyInterceptor implements NestInterceptor {
       return next.handle();
     }
 
-    const idempotencyKey = req.headers[IDEMPOTENCY_HEADER];
+    const idempotencyKey =
+      req.headers[IDEMPOTENCY_HEADER] ?? req.headers['x-idempotency-key'];
     if (!idempotencyKey) {
       return next.handle();
     }
